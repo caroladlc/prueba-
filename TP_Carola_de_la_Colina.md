@@ -49,37 +49,84 @@ path = "C:/Users/Carola/Documents/Especializacion_bioinfo/ESTADISTICA/DataSets/t
 df_con_nan = pd.read_csv(path,sep=',')
 
 ```
-## Ingreso de los datos 
-```
+## Tratamiento de NaN
 
+```
 df_con_nan.head()
 df_con_nan.describe()
 df_con_nan.shape
 
 df_con_nan.isna().sum()
 
+Unnamed: 0                0
+tiempo_maximo            61
+intensidad_maxima        61
+intensidad_minima        61
+tiempo_valle             61
+intensidad_valle         61
+sparks_amplitud          61
+TTP                      61
+sparks_tiempo_pico50     61
+sp_tau                  328
+TTP50                    61
+fullWidth                61
+(ΔF/F0)/ΔTmax            61
+fullDuration             61
+width                     0
+high                      0
+flag                      0
+dtype: int64
+
+En la tabla se muestra el numero de NaN que contiene cada una de las columnas. Se observa un grupo de 62 filas que poseen mas de 8 NaN. Considero que los datos obtenidos de estas filas provienen de mediciones erroneas y no aportan informacion a los datos. Es por esto que realice un filtro para luego eliminar estas filas del dataframe de trabajo.
 
 #número de valores NaN en cada fila utilizando isna().sum(axis=1).
 nan_por_fila = df_con_nan.isna().sum(axis=1) 
-#filtra filas que tienen más de 5 valores NaN y se almacenan en la variable filas_a_eliminar
+
+#filtrado de filas que tienen más de 5 valores NaN y se almacenan en la variable filas_a_eliminar
 filas_a_eliminar = df_con_nan[nan_por_fila > 5] 
+
 #Armo un df con las filas que van a ser eliminadas
 eliminadas = df_con_nan[nan_por_fila > 5].copy() 
- #elimina las filas con mas de 5 NaN
+
+#elimina las filas con mas de 5 NaN
 df = df_con_nan.drop(filas_a_eliminar.index)
 
+#verifico la eliminacion de las filas
 df.isna().sum()
 
-
-df.hist(figsize=(12,12), bins = 30)
-plt.show()
-
+Unnamed: 0                0
+tiempo_maximo             0
+intensidad_maxima         0
+intensidad_minima         0
+tiempo_valle              0
+intensidad_valle          0
+sparks_amplitud           0
+TTP                       0
+sparks_tiempo_pico50      0
+sp_tau                  267
+TTP50                     0
+fullWidth                 0
+(ΔF/F0)/ΔTmax             0
+fullDuration              0
+width                     0
+high                      0
+flag                      0
+dtype: int64
 
 
 ```
 
 ## Representaciones de las variables a utilizar y de sus distribuciones 
 
+```
+
+df.hist(figsize=(12,12), bins = 30)
+plt.show()
+
+```
+<img src=./imagenesplot_distribuciones_columnas.png
+     width="100%" 
+     height=auto />
 
 ## Caracteristicas de las distribuciones 
 
