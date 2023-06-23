@@ -129,12 +129,235 @@ plt.show()
      width="100%" 
      height=auto />
 
-## Caracteristicas de las distribuciones 
+## Creo los dataframes df_1 y df_2
+**•	Armo un dataframe para cada conjunto df_1 y df_2, dpendiendo de su valor en la columna "flag"**
+
+```python
+
+df_1 = df[df["flag"] == 1]
+df_2 = df[df["flag"] == 2]
+
+```
+
+## Tratamiento de outlayers de df_1 y df_2
+Inicialmente realizo de bloques para visualizar los datos de df_1 y df_2
+
+<img src=./imagenes/outlayers_1.png
+     width="100%" 
+     height=auto />
+
+<img src=./imagenes/outlayers_2.png
+     width="100%" 
+     height=auto />
+
+Para el tratamiento de outlayers voy a descartar los datos que esten en los percentilos 2 y 98 de las tablas df_1 y df_2:
+
+```python
+
+Q1 = df_1["width"].quantile(0.05)
+Q3 = df_1["width"].quantile(0.95)
+IQR = Q3 - Q1
+df_1_sin_outliers = df_1[(df_1["width"] >= Q1 - 1.5 * IQR) & (df_1["width"] <= Q3 + 1.5 * IQR)]
+
+Q1 = df_2["width"].quantile(0.05)
+Q3 = df_2["width"].quantile(0.95)
+IQR = Q3 - Q1
+df_2_sin_outliers = df_2[(df_2["width"] >= Q1 - 1.5 * IQR) & (df_2["width"] <= Q3 + 1.5 * IQR)]
+
+```
+
+En este código, Q1 y Q3 representan el percentil 2 y 98 de la columna "width", respectivamente. Calculo el rango intercuartílico (IQR) como la diferencia entre Q3 y Q1.
+Defino idx el cual identifica los valores que están por debajo de (Q1 - 1.5 * IQR) o por encima de (Q3 + 1.5 * IQR). 
+Finalmente, se utiliza idx para filtrar los DataFrames  df_1 y df_2 y se les asigna el resultado a df_1_sin_outliers y df_2_sin_outliers.
+
+Utilizando la funcion shape analizo que cantidad de datos fueron descartados. En este caso no haboa valores fuera de los limites propuestos por lo que no se eliminaron datos.
+
+Utilizando la funcion .head() verifique que las tablas df_1_sin_outliers y df_2_sin_outliers se hayan definido correctamente.
 
 ## Estimacion los intervalos de confianza 
 
+```python
 
-## Determinacion del tamanio de la muestra.    
+confidence_level = 0.95
+confidence_intervals = {}
+
+mean1 = np.mean(df_1_sin_outliers["width"]) #intervalo para flag1
+n1 = len(df_1_sin_outliers["width"])
+std_error1 = np.std(df_1_sin_outliers["width"], ddof=1) / np.sqrt(n1)
+margin_of_error1 = std_error1 * stats.t.ppf((1 + confidence_level) / 2, n1 - 1)
+confidence_interval_1 = (mean1 - margin_of_error1, mean1 + margin_of_error1)
+    
+mean2 = np.mean(df_2_sin_outliers["width"]) #intervalo para flag2
+n2 = len(df_2_sin_outliers["width"])
+std_error2 = np.std(df_2_sin_outliers["width"], ddof=1) / np.sqrt(n2)
+margin_of_error2 = std_error2* stats.t.ppf((1 + confidence_level) / 2, n1 - 1)
+confidence_interval_2 = (mean1 - margin_of_error2, mean1 + margin_of_error2)
+    
+print(confidence_interval_1)  
+
+```
+(15.268263363694762, 15.858342140892395)
+
+```python
+print(confidence_interval_2)   
+
+```
+(15.174704855186013, 15.951900649401145)
+
+
+## Caracteristicas de las distribuciones 
+
+utilizando las siguientes funciones analizo las caracteristicas generales de las distribuciones de la columna "width" en ambas tablas:
+
+```python
+
+df_1_sin_outliers["width"].describe()
+
+```
+count    1090.000000
+mean       15.563303
+std         4.964348
+min         7.000000
+25%        12.000000
+50%        15.000000
+75%        18.000000
+max        42.000000
+Name: width, dtype: float64
+
+
+```python
+
+df_1_sin_outliers["width"].describe()
+
+```
+count    1246.000000
+mean       14.262440
+std         6.990825
+min         4.000000
+25%         9.000000
+50%        12.000000
+75%        17.000000
+max        53.000000
+Name: width, dtype: float64
+
+**•	Analisis de la distribucion de los datos "**
+Inicialmente aplico el shapiro test para evaluar si los datos siguen una distribucion normal.
+
+Se calculo el tamanio muestral necesario para aplicar este test:
+
+```python
+
+from statsmodels.stats.power import tt_ind_solve_power
+effect_size = 0.5  # Tamaño del efecto esperado
+alpha = 0.05  # Nivel de significancia (probabilidad de cometer un error tipo I)
+power = 0.8  # Potencia (1 - probabilidad de cometer un error tipo II)
+
+sample_size = tt_ind_solve_power(effect_size=0.5, alpha=0.05, power=0.8)
+
+print("Tamaño muestral necesario:", int(sample_size))
+
+```
+
+Tamaño muestral necesario: 63
+
+Con el resultado del calculo del tamanio muestral verificamos que fue correcto aplicar el test shapiro.
+
+```python
+
+def aplicar_shapiro_test(column):
+    statistic, pvalue = ss.shapiro(column)
+    if pvalue > 0.05:
+        print("la dist de es normal: pvalue =", pvalue)
+    else: 
+        print("la dist no es normal: pvalue =", pvalue)
+
+aplicar_shapiro_test(df_1_sin_outliers["width"])
+aplicar_shapiro_test(df_2_sin_outliers["width"])
+
+```
+
+Los pvalue obtenidos para la columna "width" son:
+
+df_1_sin_outliers: 1.1941276258043541e-20
+df_2_sin_outliers: 5.590924067605381e-33
+
+Dado que ambos valores son menores que el punto de corte 0.05, se puede afirmar que las distribuciones de ambos grupos no siguen una distribucion normal. 
+
+A partir de este resultado decido continuar el analisis con tecnicas de analisis no parametricas, las cuales son mas apropiadas para conjuntos que no tienen un comportamiento normal.
+
+**•	MAN WITNEY "**
+
+Requicitos para aplicar el test
+#Asumir que las distribuciones tienen la misma forma 
+#Los datos tienen que ser independientes.
+#Los datos tienen que ser ordinales o bien se tienen que poder ordenarse de menor a mayor.
+#No es necesario asumir que las muestras se distribuyen de forma normal o que proceden de poblaciones normales. Sin embargo, para que el test compare medianas, ambas han de tener el mismo tipo de distribución (varianza, asimetría, ...).
+#Igualdad de varianza entre grupos.
+```python
+
+def aplicar_mannwhitneyu(col1, col2):
+    statistic, pvalue = ss.mannwhitneyu(col1, col2, use_continuity=True, alternative='two-sided', axis=0, method='auto', nan_policy='propagate', keepdims=False)
+    if pvalue > 0.05:
+        print("No hay una diferencias significativas entre las medias de las distribuciones de los grupos : pvalue =", pvalue)
+    else: 
+        print("Hay diferencias significativas entre las medias de las distribuciones de los grupos", pvalue)
+
+aplicar_mannwhitneyu(df_1_sin_outliers["width"],  df_2_sin_outliers["width"])
+
+```
+Hay diferencias significativas entre las medias de las distribuciones de los grupos 1.0946729734710784e-22
+
+
+
+Analisis de la igualdad de varianzas: test de Levene
+```python
+
+from scipy.stats import ks_2samp
+import scipy.stats as stats
+
+def aplicar_levene(col1, col2):
+    statistics, pvalue = stats.levene(col1, col2)
+    if pvalue > 0.05:
+       print("No existe una diferencia significativa entre las varianzas de los grupos, pvalue =", pvalue)
+    else:
+       print("Existe una diferencia significativa entre las varianzas de los grupos =", pvalue)
+     
+aplicar_levene(df_1_sin_outliers["width"],  df_2_sin_outliers["width"])
+
+```
+Existe una diferencia significativa entre las varianzas de los grupos = 2.5143639144404683e-09
+No es correcto aplicar el test de Man Witney
+
+
+
+**•	Kolmogorov "**
+
+Permite verificar si las puntuaciones de la muestra siguen o no una distribución normal.
+Es una prueba de bondad de ajuste: sirve para contrastar la hipótesis nula de que la distribución de una variable se ajusta a una determinada distribución teórica de probabilidad. 
+
+
+```python
+
+def aplicar_Kolmogorov(col1, col2):
+    estadistico, pvalue = ks_2samp (col1, col2)
+    if pvalue > 0.05:
+       print("los conjuntos provienen de la misma distribucion =", pvalue)
+    else:
+       print("los dos conjuntos de datos de muestra no provienen de la misma distribución =", pvalue)       
+
+aplicar_Kolmogorov(df_1_sin_outliers["width"],  df_2_sin_outliers["width"]) 
+
+```
+los dos conjuntos de datos de muestra no provienen de la misma distribución = 3.993346943681931e-27
+
+un valor p tan pequeño sugiere fuertemente que hay una diferencia significativa entre 
+los grupos que estás comparando. Por lo tanto, puedes concluir que existe evidencia 
+estadística sólida para rechazar la hipótesis nula y afirmar que los grupos difieren 
+de manera significativa en la variable que se está analizando
+
+
+## Determinacion del tamanio de la muestra.   
+
 **•	Realizar una descripción del sistema que se intenta estudiar y de las variables medidas sobre la muestra:**
 
 ## Ensayos de hipótesis:
