@@ -299,8 +299,9 @@ df_1_sin_outliers["width"].describe()
 </tr>
 </table>
 
-
+## Ensayos de hipótesis:
 **•	Analisis de la distribucion de los datos "**
+
 Inicialmente aplico el shapiro test para evaluar si los datos siguen una distribucion normal.
 
 Se calculo el tamanio muestral necesario para aplicar este test:
@@ -415,10 +416,81 @@ los grupos que estás comparando. Por lo tanto, puedes concluir que existe evide
 estadística sólida para rechazar la hipótesis nula y afirmar que los grupos difieren 
 de manera significativa en la variable que se está analizando
 
+**•	wilcoxon"**
 
-## Determinacion del tamanio de la muestra.   
+#para realizar el test de wilcoxon debemos tener columnas con igual largo. 
+Es por esto que hice un a reduccion aleatoria del numero de filas para que el largo este igualado
 
-**•	Realizar una descripción del sistema que se intenta estudiar y de las variables medidas sobre la muestra:**
+```python
+
+f1,c = df_1_sin_outliers.shape
+f2,c = df_2_sin_outliers.shape
+print("filas de df_1:",f1,"filas de df_2:",f2)
+if f1>f2:
+    df_1_sin_outliers_red= df_1_sin_outliers.sample(f2)
+    f3,c = df_1_sin_outliers_red.shape
+    print("se redujo df_1 a", f3)
+    print("df_2:", f2)
+if f1<f2:
+    df_2_sin_outliers_red= df_2_sin_outliers.sample(f1)
+    f4,c = df_2_sin_outliers_red.shape
+    print("se redujo df_2 a", f4)
+    print("df_1: ", f1)
+else:
+    pass
+
+```
+filas de df_1: 1090 filas de df_2: 1246
+se redujo df_2 a 1090
+df_1:  1090
+
+
+```python
+
+def aplicar_wilcoxon(col1, col2):
+    
+    statistic, pvalue = ss.wilcoxon(col1, col2,zero_method='wilcox', correction=False, alternative='two-sided', method='auto', axis=0, nan_policy='propagate', keepdims = False)
+    if pvalue > 0.05:
+        print("No hay una diferencias significativas entre la media de los grupos : pvalue =", pvalue)
+    else: 
+        print("Hay diferencias significativas entre la media de los grupos, pvalue=", pvalue)
+
+aplicar_wilcoxon(df_1_sin_outliers["width"], df_2_sin_outliers_red["width"])
+
+```
+Hay diferencias significativas entre la media de los grupos, pvalue= 1.3795423540485293e-11
+
+Calculo del tamanio muestral necesario:
+```python
+
+from scipy.stats import wilcoxon
+
+# Parámetros para el cálculo del tamaño muestral
+effect_size = 0.5  # Tamaño del efecto esperado
+alpha = 0.05  # Nivel de significancia
+power = 0.8  # Poder estadístico deseado
+
+# Función para calcular el tamaño muestral
+def calculate_sample_size(effect_size, alpha, power):
+    n = 2  # Inicialización del tamaño muestral
+    while True:
+        _, p_value = wilcoxon([0] * n, [effect_size] * n)
+        if p_value < alpha or n >= 100000:
+            break
+        n += 1
+    return n
+
+# Cálculo del tamaño muestral
+sample_size = calculate_sample_size(effect_size, alpha, power)
+
+# Imprimir el tamaño muestral calculado
+print("Tamaño muestral:", sample_size)
+
+```
+Tamaño muestral: 6
+
+  
+
 
 ## Ensayos de hipótesis:
 **Realizar un contraste de hipótesis para dos o más poblaciones.**
