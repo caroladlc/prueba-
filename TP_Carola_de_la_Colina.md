@@ -126,7 +126,7 @@ plt.show()
 ```
 
 <img src=./imagenes/plot_distribuciones_columnas.png
-     width="100%" 
+     width="80%" 
      height=auto />
 
 ## Creo los dataframes df_1 y df_2
@@ -143,11 +143,11 @@ df_2 = df[df["flag"] == 2]
 Inicialmente realizo de bloques para visualizar los datos de df_1 y df_2
 
 <img src=./imagenes/outlayers_1.png
-     width="50%" 
+     width="40%" 
      height=auto />
 
 <img src=./imagenes/outlayers_2.png
-     width="50%" 
+     width="40%" 
      height=auto />
 
 Para el tratamiento de outlayers voy a descartar los datos que esten en los percentilos 2 y 98 de las tablas df_1 y df_2:
@@ -300,7 +300,7 @@ df_1_sin_outliers["width"].describe()
 </table>
 
 ## Ensayos de hipótesis:
-**•	Analisis de la distribucion de los datos "**
+**Realizar un contraste de hipótesis para dos o más poblaciones.**
 
 Inicialmente aplico el shapiro test para evaluar si los datos siguen una distribucion normal.
 
@@ -497,10 +497,9 @@ print("Tamaño muestral:", sample_size)
 Tamaño muestral: 6
 
 
-
-**Realizar un contraste de hipótesis para dos o más poblaciones.**
-
 **o	**Realizar un análisis de dependencia de variables categóricas.**
+
+Para tener una idea general de las correlaciones entre las diferentes variables realice una tabla de correlaciones entre todas las columnas
 
 ```python
 
@@ -515,12 +514,31 @@ sns.set(rc={'figure.figsize':(34,24)})
      height=auto />
 
 
-**o	**Evaluar el ajuste de una recta de regresión e interpretar el coeficiente de correlación.**
+## Tabla de contingencia: relacion entre flag y presencia de NaN
 
- 
+Para realizar esta tabla lo primero que hice fue armar dos listas: is_spark e is_nan, que contienen caracteres booleanos 
+```python
+import numpy as np
+import math
+
+is_spark = []
+for item in df["flag"]:
+    if item == 1:
+        is_spark.append(True)
+    elif item == 2:
+        is_spark.append(False)    
 
 
+is_nan = []
+for item in df["sp_tau"]:
+    if math.isnan(item):
+        is_nan.append(False)
+    else:
+        is_nan.append(True)
+```
 
+
+**Evaluar el ajuste de una recta de regresión e interpretar el coeficiente de correlación.**
 
 
 
