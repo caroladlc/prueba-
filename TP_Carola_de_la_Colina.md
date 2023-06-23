@@ -1,4 +1,4 @@
-# # TP Manejo de Datos en Biología Computacional. Herramientas de Estadística
+ # TP Manejo de Datos en Biología Computacional y Herramientas de Estadística
 
 ## descripción del sistema 
 **•	Realizar una descripción del sistema que se intenta estudiar y de las variables medidas sobre la muestra:**
@@ -49,7 +49,7 @@ path = "C:/Users/Carola/Documents/Especializacion_bioinfo/ESTADISTICA/DataSets/t
 df_con_nan = pd.read_csv(path,sep=',')
 
 ```
-## Tratamiento de NaN
+### Tratamiento de NaN
 
 ```
 df_con_nan.head()
@@ -143,11 +143,11 @@ df_2 = df[df["flag"] == 2]
 Inicialmente realizo de bloques para visualizar los datos de df_1 y df_2
 
 <img src=./imagenes/outlayers_1.png
-     width="100%" 
+     width="50%" 
      height=auto />
 
 <img src=./imagenes/outlayers_2.png
-     width="100%" 
+     width="50%" 
      height=auto />
 
 Para el tratamiento de outlayers voy a descartar los datos que esten en los percentilos 2 y 98 de las tablas df_1 y df_2:
@@ -346,7 +346,13 @@ Dado que ambos valores son menores que el punto de corte 0.05, se puede afirmar 
 
 A partir de este resultado decido continuar el analisis con tecnicas de analisis no parametricas, las cuales son mas apropiadas para conjuntos que no tienen un comportamiento normal.
 
-**•	MAN WITNEY "**
+### MAN WITNEY
+
+Es una prueba de rangos con signos, es un test no paramétrico utilizado para determinar si hay una diferencia significativa entre dos grupos independientes en una variable continua.
+
+Se utiliza cuando no se cumplen los supuestos de normalidad o igualdad de varianzas necesarios para realizar una prueba t de Student. En su lugar, se basa en los rangos de los datos para evaluar si hay una diferencia significativa entre los dos grupos.
+
+Su objetivo es determinar si las muestras de dos grupos provienen de la misma población o si tienen una distribución de valores significativamente diferente. La hipótesis nula (H0) establece que no hay diferencia entre los grupos, mientras que la hipótesis alternativa (H1) establece que hay una diferencia significativa.
 
 Requicitos para aplicar el test
 #Asumir que las distribuciones tienen la misma forma 
@@ -391,7 +397,7 @@ No es correcto aplicar el test de Man Witney
 
 
 
-**•	Kolmogorov "**
+###	Kolmogorov
 
 Permite verificar si las puntuaciones de la muestra siguen o no una distribución normal.
 Es una prueba de bondad de ajuste: sirve para contrastar la hipótesis nula de que la distribución de una variable se ajusta a una determinada distribución teórica de probabilidad. 
@@ -416,9 +422,10 @@ los grupos que estás comparando. Por lo tanto, puedes concluir que existe evide
 estadística sólida para rechazar la hipótesis nula y afirmar que los grupos difieren 
 de manera significativa en la variable que se está analizando
 
-**•	wilcoxon"**
+###	wilcoxon
 
-#para realizar el test de wilcoxon debemos tener columnas con igual largo. 
+La prueba de los rangos con signo de Wilcoxon es una prueba no paramétrica para comparar el rango medio de dos muestras relacionadas y determinar si existen diferencias entre ellas. Se utiliza como alternativa a la prueba t de Student cuando no se puede suponer la normalidad de dichas muestras.
+Para realizar el test de wilcoxon debemos tener columnas con igual largo. 
 Es por esto que hice un a reduccion aleatoria del numero de filas para que el largo este igualado
 
 ```python
@@ -489,12 +496,25 @@ print("Tamaño muestral:", sample_size)
 ```
 Tamaño muestral: 6
 
-  
 
 
-## Ensayos de hipótesis:
 **Realizar un contraste de hipótesis para dos o más poblaciones.**
+
 **o	**Realizar un análisis de dependencia de variables categóricas.**
+
+```python
+
+corr = df[df.columns].corr()
+sns.heatmap(corr, cmap="YlGnBu", annot = True)
+sns.set(rc={'figure.figsize':(34,24)})
+
+```
+
+<img src=./imagenes/correlacion.png
+     width="100%" 
+     height=auto />
+
+
 **o	**Evaluar el ajuste de una recta de regresión e interpretar el coeficiente de correlación.**
 
  
