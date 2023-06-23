@@ -124,13 +124,14 @@ df.hist(figsize=(12,12), bins = 30)
 plt.show()
 
 ```
-<img src=./imagenesplot_distribuciones_columnas.png
+
+<img src=./imagenes/plot_distribuciones_columnas.png
      width="100%" 
      height=auto />
 
 ## Caracteristicas de las distribuciones 
 
-## Estimacion los intervalos de c¬onfianza 
+## Estimacion los intervalos de confianza 
 
 
 ## Determinacion del tamanio de la muestra.    
