@@ -229,23 +229,30 @@ df_1_sin_outliers["width"].describe()
 <td>4.964348</td>
 </tr>
 <tr>
-<td>count</td>
-<td>1090.000000</td>
+<td>min</td>
+<td>7.000000</td>
 </tr>
 <tr>
-<td>count</td>
-<td>1090.000000</td>
+<td>25%</td>
+<td>12.000000</td>
+</tr>
+<tr>
+<td>50%</td>
+<td>15.000000</td>
+</tr>
+<tr>
+<td>75%</td>
+<td>18.000000</td>
+</tr>
+<tr>
+<td>max</td>
+<td>42.000000</td>
+</tr>
+<tr>
+<td>max</td>
+<td>42.000000</td>
 </tr>
 </table>
-count    1090.000000
-mean       15.563303
-std         4.964348
-min         7.000000
-25%        12.000000
-50%        15.000000
-75%        18.000000
-max        42.000000
-Name: width, dtype: float64
 
 
 ```python
@@ -253,15 +260,45 @@ Name: width, dtype: float64
 df_1_sin_outliers["width"].describe()
 
 ```
-count    1246.000000
-mean       14.262440
-std         6.990825
-min         4.000000
-25%         9.000000
-50%        12.000000
-75%        17.000000
-max        53.000000
-Name: width, dtype: float64
+<table>
+<tr>
+<td>count</td>
+<td>1246.000000</td>
+</tr>
+<tr>
+<td>mean</td>
+<td>14.262440</td>
+</tr>
+<tr>
+<td>std</td>
+<td>6.990825</td>
+</tr>
+<tr>
+<td>min</td>
+<td>4.000000</td>
+</tr>
+<tr>
+<td>25%</td>
+<td>9.000000</td>
+</tr>
+<tr>
+<td>50%</td>
+<td>12.000000</td>
+</tr>
+<tr>
+<td>75%</td>
+<td>17.000000</td>
+</tr>
+<tr>
+<td>max</td>
+<td>53.000000</td>
+</tr>
+<tr>
+<td>max</td>
+<td>42.000000</td>
+</tr>
+</table>
+
 
 **•	Analisis de la distribucion de los datos "**
 Inicialmente aplico el shapiro test para evaluar si los datos siguen una distribucion normal.
