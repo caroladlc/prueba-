@@ -214,6 +214,29 @@ utilizando las siguientes funciones analizo las caracteristicas generales de las
 df_1_sin_outliers["width"].describe()
 
 ```
+
+<table>
+<tr>
+<td>count</td>
+<td>1090.000000</td>
+</tr>
+<tr>
+<td>mean</td>
+<td>15.563303</td>
+</tr>
+<tr>
+<td>std</td>
+<td>4.964348</td>
+</tr>
+<tr>
+<td>count</td>
+<td>1090.000000</td>
+</tr>
+<tr>
+<td>count</td>
+<td>1090.000000</td>
+</tr>
+</table>
 count    1090.000000
 mean       15.563303
 std         4.964348
