@@ -150,7 +150,7 @@ Inicialmente realizo de bloques para visualizar los datos de df_1 y df_2
      width="40%" 
      height=auto />
 
-Para el tratamiento de outlayers voy a descartar los datos que esten en los percentilos 2 y 98 de las tablas df_1 y df_2:
+Para el tratamiento de outlayers se descartaron los datos que estan en los percentilos 2 y 98 de las tablas df_1 y df_2:
 
 ```python
 
@@ -167,14 +167,16 @@ df_2_sin_outliers = df_2[(df_2["width"] >= Q1 - 1.5 * IQR) & (df_2["width"] <= Q
 ```
 
 En este código, Q1 y Q3 representan el percentil 2 y 98 de la columna "width", respectivamente. Calculo el rango intercuartílico (IQR) como la diferencia entre Q3 y Q1.
-Defino idx el cual identifica los valores que están por debajo de (Q1 - 1.5 * IQR) o por encima de (Q3 + 1.5 * IQR). 
-Finalmente, se utiliza idx para filtrar los DataFrames  df_1 y df_2 y se les asigna el resultado a df_1_sin_outliers y df_2_sin_outliers.
+Se defino idx: variable que identifica los valores que están por debajo de (Q1 - 1.5 * IQR) o por encima de (Q3 + 1.5 * IQR). 
+Finalmente, se utilizo idx para filtrar los DataFrames  df_1 y df_2 y se les asigna el resultado a df_1_sin_outliers y df_2_sin_outliers.
 
-Utilizando la funcion shape analizo que cantidad de datos fueron descartados. En este caso no haboa valores fuera de los limites propuestos por lo que no se eliminaron datos.
+Utilizando la funcion shape se analizo la cantidad de datos que fueron descartados. En este caso no hubo valores fuera de los limites propuestos por lo que no se eliminaron datos.
 
-Utilizando la funcion .head() verifique que las tablas df_1_sin_outliers y df_2_sin_outliers se hayan definido correctamente.
+Utilizando la funcion .head() se verifico que las tablas df_1_sin_outliers y df_2_sin_outliers se hubieran definido correctamente.
 
 ## Estimacion los intervalos de confianza 
+
+El cálculo del intervalo de confianza utiliza la distribución t de Student para estimar un rango dentro del cual se espera que se encuentre la media poblacional con un nivel de confianza determinado.
 
 ```python
 
@@ -207,7 +209,7 @@ print(confidence_interval_2)
 
 ## Caracteristicas de las distribuciones 
 
-utilizando las siguientes funciones analizo las caracteristicas generales de las distribuciones de la columna "width" en ambas tablas:
+Se analizaron las caracteristicas generales de las distribuciones de la columna "width" en ambas tablas:
 
 ```python
 
@@ -299,12 +301,10 @@ df_1_sin_outliers["width"].describe()
 </tr>
 </table>
 
-## Ensayos de hipótesis:
-**Realizar un contraste de hipótesis para dos o más poblaciones.**
+## Ensayos de hipótesis para la columna "width" en ambas tablas:
 
-Inicialmente aplico el shapiro test para evaluar si los datos siguen una distribucion normal.
-
-Se calculo el tamanio muestral necesario para aplicar este test:
+Inicialmente se aplico el shapiro test para evaluar si los datos siguen una distribucion normal.
+Para esto primero se calcula el tamanio muestral necesario
 
 ```python
 
@@ -318,10 +318,9 @@ sample_size = tt_ind_solve_power(effect_size=0.5, alpha=0.05, power=0.8)
 print("Tamaño muestral necesario:", int(sample_size))
 
 ```
-
 Tamaño muestral necesario: 63
 
-Con el resultado del calculo del tamanio muestral verificamos que fue correcto aplicar el test shapiro.
+Con el resultado del calculo del tamanio muestral verificamos que es correcto aplicar el test shapiro:
 
 ```python
 
@@ -344,7 +343,7 @@ df_2_sin_outliers: 5.590924067605381e-33
 
 Dado que ambos valores son menores que el punto de corte 0.05, se puede afirmar que las distribuciones de ambos grupos no siguen una distribucion normal. 
 
-A partir de este resultado decido continuar el analisis con tecnicas de analisis no parametricas, las cuales son mas apropiadas para conjuntos que no tienen un comportamiento normal.
+A partir de este resultado se decidio continuar el analisis con tecnicas no parametricas, las cuales son mas apropiadas para conjuntos que no tienen un comportamiento normal.
 
 ### MAN WITNEY
 
@@ -393,7 +392,7 @@ aplicar_levene(df_1_sin_outliers["width"],  df_2_sin_outliers["width"])
 
 ```
 Existe una diferencia significativa entre las varianzas de los grupos = 2.5143639144404683e-09
-No es correcto aplicar el test de Man Witney
+No fue correcto aplicar el test de Man Witney
 
 
 
@@ -425,8 +424,9 @@ de manera significativa en la variable que se está analizando
 ###	wilcoxon
 
 La prueba de los rangos con signo de Wilcoxon es una prueba no paramétrica para comparar el rango medio de dos muestras relacionadas y determinar si existen diferencias entre ellas. Se utiliza como alternativa a la prueba t de Student cuando no se puede suponer la normalidad de dichas muestras.
-Para realizar el test de wilcoxon debemos tener columnas con igual largo. 
-Es por esto que hice un a reduccion aleatoria del numero de filas para que el largo este igualado
+Para realizar el test de wilcoxon se debe tener columnas con igual largo. 
+Es por esto que se realizo una reduccion aleatoria del numero de filas para que el largo este igualado
+Hipótesis nula: Las medianas de las dos columnas df_1_sin_outliers["width"] y df_2_sin_outliers_red["width"] son iguales.
 
 ```python
 
@@ -467,7 +467,9 @@ aplicar_wilcoxon(df_1_sin_outliers["width"], df_2_sin_outliers_red["width"])
 ```
 Hay diferencias significativas entre la media de los grupos, pvalue= 1.3795423540485293e-11
 
-Calculo del tamanio muestral necesario:
+Esto sugiere que hay evidencia suficiente para rechazar la hipótesis nula y concluir que hay diferencias significativas entre las medianas de las dos muestras.
+
+Calculo del tamanio muestral necesario para realizar la prueba de wilcoxon:
 ```python
 
 from scipy.stats import wilcoxon
@@ -495,7 +497,10 @@ print("Tamaño muestral:", sample_size)
 
 ```
 Tamaño muestral: 6
+fue correcto aplicar el test
 
+
+Como conclusion luego de aplicar los test no parametricos de Kolmogorov y Wilcoxon se puede inferir que los datos de las columnas "width" en las dos poblaciones analizadas corresponden a diferentes distribuciones, por lo que se encuentra una diferencia significativa entre las medias.
 
 **Realizar un análisis de dependencia de variables categóricas.**
 
@@ -561,10 +566,14 @@ Por ultimo se armo la tabla de contingencia y se analizo mediante la prueba de c
 a = df_contingencia ['is_spark'] == True
 b = df_contingencia ['is_nan'] == True
 groups = df_contingencia.groupby([a,b]).count() 
-print("print groups:")
-print (groups)
 
-print(ss.chisquare(groups, ddof=0, axis=0))
+#Convertir la tabla de contingencia a un array
+observed = groups.values
+
+chi2, pvalue = ss.chisquare(groups, ddof=0, axis=0)
+
+print("chi2 statistics", chi2)
+print("pvalue", pvalue)
 
 ```
 
