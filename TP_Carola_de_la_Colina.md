@@ -497,7 +497,7 @@ print("Tamaño muestral:", sample_size)
 Tamaño muestral: 6
 
 
-**o	**Realizar un análisis de dependencia de variables categóricas.**
+**Realizar un análisis de dependencia de variables categóricas.**
 
 Para tener una idea general de las correlaciones entre las diferentes variables realice una tabla de correlaciones entre todas las columnas
 
@@ -514,9 +514,13 @@ sns.set(rc={'figure.figsize':(34,24)})
      height=auto />
 
 
-## Tabla de contingencia: relacion entre flag y presencia de NaN
+## Tabla de contingencia: relacion entre "flag" y presencia de NaN en la columna "sp_tau"
 
-Para realizar esta tabla lo primero que hice fue armar dos listas: is_spark e is_nan, que contienen caracteres booleanos 
+Se utilizo la columna sp_tau porque es la que presenta valores NaN luego del filtrado inicial.
+Para realizar esta tabla se armaron dos listas con el fin de categorizar los datos: 
+is_spark: contiene informacion acerca de si la senial se debe a un spark o a otro tipo de senial
+is_nan: indica si los datos de la columna "sp_tau" contienen NaN o no.
+
 ```python
 import numpy as np
 import math
@@ -535,11 +539,132 @@ for item in df["sp_tau"]:
         is_nan.append(False)
     else:
         is_nan.append(True)
+
+```
+
+Luego se creo un dataframe con las listas armadas previamente:
+
+```python
+
+data = {
+    'is_spark': is_spark,
+    'is_nan': is_nan
+}        
+
+df_contingencia = pd.DataFrame(data)
+
+```
+Por ultimo se armo la tabla de contingencia y se analizo mediante la prueba de chi-cuadrado (χ²) con el objetivo de evaluar la asociación entre las dos variables categóricas.
+
+```python
+
+a = df_contingencia ['is_spark'] == True
+b = df_contingencia ['is_nan'] == True
+groups = df_contingencia.groupby([a,b]).count() 
+print("print groups:")
+print (groups)
+
+print(ss.chisquare(groups, ddof=0, axis=0))
+
 ```
 
 
+## Tabla de contingencia: relacion entre "tiempo_valle" y "width".
+
+Se categorizando las columnas "width" y "tiempo_valle", dependiendo de si su valor se encuentra por encima o por debajo de las medias calculadas
+
+```python
+import numpy as np
+import math
+
+whidth_under_mean = []
+for value in df["width"]:
+    if value <= 14.815603:
+        whidth_under_mean.append(True)
+    elif value > 14.815603:
+        whidth_under_mean.append(False)    
+
+tiempo_valle_under_mean = []
+for value in df["tiempo_valle"]:
+    if value <= 10.145120:
+        tiempo_valle_under_mean.append(True)
+    elif value > 10.145120:
+        tiempo_valle_under_mean.append(False)  
+
+
+```
+
+Luego se creo un dataframe df_contingencia_ con las listas armadas previamente:
+
+```python
+
+#arme un df con las listas creadas anteriormente       
+data_ = {
+    'whidth_under_mean':whidth_under_mean,
+    'tiempo_valle_under_mean': tiempo_valle_under_mean
+}        
+
+df_contingencia_ = pd.DataFrame(data_)
+
+```
+
+Luego se utilizo group by para comparar los datos en una tabla de contingencia.
+Por ultimo se realizo un analisis mediante la prueba de chi-cuadrado (χ²) con el objetivo de evaluar la relacion entre las dos variables categóricas.
+
+```python
+
+tabla_contingencia_ = pd.crosstab(df_contingencia_['whidth_under_mean'], df_contingencia_['tiempo_valle_under_mean'])
+print("tabla_contingencia: ")
+print(tabla_contingencia_)
+a = df_contingencia_['whidth_under_mean']
+b = df_contingencia_['tiempo_valle_under_mean']
+
+#comparamos los datos en una tabla de contingencia
+groups = df_contingencia_.groupby([a,b]).count() 
+print("print groups:")
+print (groups)
+
+print(ss.chisquare(groups, ddof=0, axis=0))
+
+
+```
+
 **Evaluar el ajuste de una recta de regresión e interpretar el coeficiente de correlación.**
 
+Para determinar si existe una asociación entre dos variables y la fuerza de esta asociación se calculo el coeficiente de correlación de Pearson: Es un test paramétrico que se utiliza para medir 
+la relación lineal entre dos variables continuas. El coeficiente de correlación de Pearson
+toma valores entre -1 y 1, donde -1 indica una correlación negativa perfecta, 0 indica ausencia de correlación, y 1 indica una correlación positiva perfecta.
 
+```python
 
+from scipy.stats import pearsonr
+
+corr, p_value = pearsonr(df_1_sin_outliers["width"], df_1_sin_outliers["tiempo_maximo"])
+
+print("Coeficiente de correlación:", corr)
+print("Valor p:", p_value)
+
+```
+Coeficiente de correlación: 0.7834139992806171
+Valor p: 5.667521695345137e-227
+
+El coeficiente de correlación de 0.7834 da indicios de que existe una correlación entre las variables "width" y "tiempo_maximo". Para evaluar si este resultado es significativo se analiza el valor p. En este caso el valor p es mucho menor que 0.05 lo que indica que la relación observada no es azarosa.
+
+Por ultimo se realizo un grafico de la relacion entre las dos variables analizadas previamente
+
+```python
+
+X = df_1_sin_outliers["width"]
+Y = df_1_sin_outliers["tiempo_maximo"]
+
+plt.scatter(X, Y)
+plt.xlabel("width")
+plt.ylabel("tiempo_maximo")
+plt.title("Gráfico de dispersión: width vs tiempo_maximo")
+plt.show()
+
+```
+<img src=./imagenes/grafico_dispersion.png
+     width="50%" 
+     height=auto />
 
