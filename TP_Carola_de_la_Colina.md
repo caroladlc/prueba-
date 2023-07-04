@@ -139,8 +139,8 @@ df_2 = df[df["flag"] == 2]
 
 ```
 
-## Tratamiento de outlayers de df_1 y df_2
-Inicialmente realizo de bloques para visualizar los datos de df_1 y df_2
+## Tratamiento de outlayers de la variable "width" de df_1 y df_2 
+Inicialmente realizaron diagramas de bloques para visualizar los datos de df_1 y df_2
 
 <img src=./imagenes/outlayers_1.png
      width="40%" 
@@ -398,7 +398,7 @@ No fue correcto aplicar el test de Man Witney
 
 ###	Kolmogorov
 
-Permite verificar si las puntuaciones de la muestra siguen o no una distribución normal.
+Permite verificar si los datos de dos muestras siguen la misma distribucion.
 Es una prueba de bondad de ajuste: sirve para contrastar la hipótesis nula de que la distribución de una variable se ajusta a una determinada distribución teórica de probabilidad. 
 
 
